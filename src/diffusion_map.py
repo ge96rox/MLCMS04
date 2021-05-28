@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.datasets import make_swiss_roll
 
 
 def gen_trigonom_data(n):
@@ -34,7 +35,11 @@ def diffusion_map(data, nr_component):
     return lambda_pc, phi_pc, dist_matrix
 
 
-def plot_part_one_eigenfunction(nr_component, time, phi_pc, lambda_pc):
+def gen_swiss_roll_data(nr_sample, noise):
+    return make_swiss_roll(nr_sample, noise)
+
+
+def plot_eigenfunction(nr_component, time, phi_pc, lambda_pc):
     for comp in range(nr_component):
         plt.plot(time, phi_pc[:, comp], label='Eigenvalue {0} '.format(lambda_pc[comp]))
         plt.xlabel("time")
