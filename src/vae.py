@@ -3,7 +3,7 @@ import torch.nn as nn
 import torchvision
 import numpy as np
 import matplotlib.pyplot as plt
-import os
+
 
 
 class VAE(nn.Module):
@@ -63,17 +63,19 @@ class VAE(nn.Module):
 
 
 def show_mnist(nr_row, nr_col, data_loader):
-    fig = plt.figure(figsize=(5, 5))
+    fig = plt.figure(figsize=(10, 6))
     nr_total = nr_row * nr_col
     for i in range(nr_total):
         idx = np.random.randint(0, len(data_loader))
         ax = fig.add_subplot(nr_row, nr_col, i + 1)
         image = data_loader.dataset[idx][0].view(28, 28).numpy()
         ax.imshow(image)
+        ax.axis("off")
+    plt.show()
 
 
 def show_reconstruct_mnist(nr_row, nr_col, reconstr, y):
-    fig = plt.figure(figsize=(5, 5))
+    fig = plt.figure(figsize=(10, 6))
     nr_total = nr_row * nr_col
     for i in range(nr_total):
         idx = np.random.randint(0, len(reconstr))
@@ -86,7 +88,7 @@ def show_reconstruct_mnist(nr_row, nr_col, reconstr, y):
 
 
 def show_generate_mnist(nr_row, nr_col, gendata):
-    fig = plt.figure(figsize=(5, 5))
+    fig = plt.figure(figsize=(10, 6))
     nr_total = nr_row * nr_col
     for i in range(nr_total):
         idx = np.random.randint(0, len(gendata))
@@ -98,29 +100,4 @@ def show_generate_mnist(nr_row, nr_col, gendata):
 
 
 if __name__ == "__main__":
-    batch_size = 128
-    train_loader = torch.utils.data.DataLoader(
-        torchvision.datasets.MNIST('dataset', train=True, download=True,
-                                   transform=torchvision.transforms.ToTensor(),
-                                   ), batch_size=batch_size, shuffle=True)
-    max_epochs = 1
-    show_step = 100
-    input_size = 28 * 28
-    output_size = 28 * 28
-    vae = VAE(256, 256, 256, input_size, output_size)
-    opt = torch.optim.Adam(vae.parameters(), lr=1e-3)
-    for epoch in range(max_epochs):
-        print("Epoch {0}".format(epoch))
-        for i, batch in enumerate(train_loader):
-            x, y = batch
-            x = x.view(x.shape[0], -1)
-            opt.zero_grad()
-            reconstruction, mu, logsigma = vae.forward_elbo(x)
-            loss = -vae.loss_function(x, reconstruction, mu, logsigma).mean(-1)
-            loss.backward()
-            opt.step()
-            if i % show_step == 0:
-                print("loss = {0}".format(loss.item()))
-                # show_reconstruct_mnist(2, 2, reconstruction, y)
-                gen_data = vae.gen_sample_data(4, mu, logsigma)
-                show_generate_mnist(2, 2, gen_data)
+    pass
