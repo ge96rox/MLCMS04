@@ -109,4 +109,64 @@ def show_latent_distribution(latent_data, labels):
 
 
 if __name__ == "__main__":
-    pass
+    test_set = torchvision.datasets.MNIST('dataset', train=False, download=True,
+                                          transform=torchvision.transforms.ToTensor(),
+                                          )
+    test_size = len(test_set)
+    test_loader = torch.utils.data.DataLoader(
+        test_set, batch_size=test_size, shuffle=True)
+
+    batch_size = 128
+    train_loader = torch.utils.data.DataLoader(
+        torchvision.datasets.MNIST('dataset', train=True, download=True,
+                                   transform=torchvision.transforms.ToTensor(),
+                                   ), batch_size=batch_size, shuffle=True)
+
+    max_epochs = 101
+    show_step = 100
+    input_size = 28 * 28
+    output_size = 28 * 28
+    latent_dim = 2
+    en_hidden = 256
+    de_hidden = 256
+    gendata_size = 100
+    vae = VAE(en_hidden, latent_dim, de_hidden, input_size, output_size)
+    opt = torch.optim.Adam(vae.parameters(), lr=1e-3)
+    loss_train = []
+    loss_test = []
+    loss_epoch = 0
+    i = 0
+    for epoch in range(max_epochs):
+        print("Epoch {0}".format(epoch))
+        for batch in train_loader:
+            x, y = batch
+            x = x.view(x.shape[0], -1)
+            opt.zero_grad()
+            reconstruction, mu, sigma = vae.forward_elbo(x)
+            loss = 1/batch_size*-vae.loss_function(x, reconstruction, mu, sigma).mean(-1)
+            loss.backward()
+            opt.step()
+            loss_epoch += loss
+            i += 1
+
+        loss_epoch = loss_epoch / i
+        print("loss = {0}".format(loss_epoch.item()))
+        loss_train.append(loss_epoch)
+        loss_epoch = 0
+        i = 0
+        for batch_test in test_loader:
+             x_test, y_test = batch_test
+             x_test = x_test.view(x_test.shape[0], -1)
+             with torch.no_grad():
+                reconstruction_test, mu_test, sigma_test = vae.forward_elbo(x_test)
+                loss = 1/test_size*-vae.loss_function(x_test, reconstruction_test, mu_test, sigma_test).mean(-1)
+                loss_test.append(loss)
+             if epoch == 1 or epoch == 5 or epoch == 25 or epoch == 50 or epoch == 75 or epoch == 100:
+               print("latent parameters")
+               show_latent_distribution(mu_test,y_test)
+               print("reconstruct images")
+               show_reconstruct_mnist(3, 5, reconstruction_test, y_test)
+               print("generate synthetic data")
+               gen_data = vae.gen_sample_data(gendata_size, latent_dim)
+               show_generate_mnist(3, 5, gen_data)
+
