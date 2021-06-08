@@ -5,6 +5,13 @@ from src.pca import *
 
 
 def gen_trigonom_data(n):
+    """function that generate trigonometric data
+
+    Parameters
+    ----------
+    n: int
+        number of generated sample
+    """
     time = np.linspace(0, 2 * np.pi, n + 2)[1:n + 1]
     x = np.cos(time)
     y = np.sin(time)
@@ -20,6 +27,24 @@ def gen_trigonom_data(n):
 
 
 def diffusion_map(data, nr_component):
+    """algorithm that calculate eigenvectors and eigenvalues for diffusion maps
+
+    Parameters
+    ----------
+    data: np.ndarray
+        dataset
+    nr_component: int
+        number of required principle components
+
+    Returns
+    ----------
+    lambda_pc:
+       lambda of principle components
+    phi_pc:
+        eigenvectors of principle components
+    dist_matrix:
+        distrance matrix
+    """
     dist = data[np.newaxis, :, :] - data[:, np.newaxis, :]
     dist_matrix = np.linalg.norm(dist, axis=-1)
     eps = 0.05 * np.max(dist_matrix)
@@ -37,10 +62,36 @@ def diffusion_map(data, nr_component):
 
 
 def gen_swiss_roll_data(nr_sample, noise):
+    """function that generate swiss roll data
+
+    Parameters
+    ----------
+    nr_sample: int
+        number of required data
+    noise:
+        The standard deviation of the gaussian noise
+    Returns
+    ----------
+    tuple:
+        swiss roll data
+    """
     return make_swiss_roll(nr_sample, noise)
 
 
 def plot_eigenfunction(nr_component, time, phi_pc, lambda_pc):
+    """function that plot time against eigenfucntion
+
+    Parameters
+    ----------
+    nr_component: int
+        number of required principle components
+    time: np.ndarray
+        time
+    lambda_pc: np.ndarray
+       lambda of principle components
+    phi_pc: np.ndarray
+        eigenvectors of principle components
+    """
     for comp in range(nr_component+1):
         plt.plot(time, phi_pc[:, comp], label='Eigenvalue {0} '.format(lambda_pc[comp]))
         plt.xlabel("time")
@@ -50,6 +101,21 @@ def plot_eigenfunction(nr_component, time, phi_pc, lambda_pc):
 
 
 def plot_swiss_roll(data, t, text):
+    """function that generate swiss roll data
+
+    Parameters
+    ----------
+    data: np.ndarray
+        data
+    t: np.ndarray
+        color map
+    text: str
+        text to set title
+    Returns
+    ----------
+    tuple:
+        swiss roll data
+    """
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=t, cmap=plt.cm.Spectral)
@@ -59,6 +125,7 @@ def plot_swiss_roll(data, t, text):
     ax.set_title("Swiss-Roll data manifold {0}".format(text))
     ax.view_init(10, 70)
     return fig
+
 
 if __name__ == "__main__":
     pass

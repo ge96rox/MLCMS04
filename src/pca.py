@@ -1,9 +1,27 @@
 import numpy as np
 
 
- 
 def pca(dataset, num_pc = -1):
-    
+    """function that plot fire evac dataset
+
+    Parameters
+    ----------
+    dataset : np.ndarray, shape [N, D]
+        data of distributed people within the MI building
+    num_pc: int
+        number of principle components
+    Returns
+    -------
+    u:
+        u matrix from SVD
+    s:
+        s matrix from SVD
+    vh:
+        v matrix from SVD
+    s_truncated:
+         truncate s matrix
+
+    """
     # L 
     if(num_pc == -1):
         num_pc = min(dataset.shape)        
@@ -26,8 +44,22 @@ def pca(dataset, num_pc = -1):
       
     return u,s,vh,s_truncated
 
+
 def pca_energy(dataset, num_pc = -1):
-    
+    """function that plot fire evac dataset
+
+    Parameters
+    ----------
+    dataset : np.ndarray, shape [N, D]
+        data of distributed people within the MI building
+    num_pc: int
+        number of principle components
+    Returns
+    -------
+    energy: int
+        energy
+
+    """
     if(num_pc == -1):
         num_pc = min(dataset.shape)  
         
