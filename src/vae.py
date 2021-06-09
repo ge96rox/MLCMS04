@@ -60,7 +60,7 @@ class VAE(nn.Module):
         return reconstruction, mu, sigma
 
     def loss_function(self, x, reconstruction, mu, sigma):
-        """function that calculate loss
+        """function that calculates loss
 
         Parameters
         ----------
@@ -83,7 +83,7 @@ class VAE(nn.Module):
         return outp
 
     def encoder(self, x):
-        """function that calculate loss
+        """function that gets the parameters of q(z) for a batch of data points.
 
         Parameters
         ----------
@@ -105,7 +105,7 @@ class VAE(nn.Module):
         return mu, sigma
 
     def sample_reparameterize(self, mu, sigma):
-        """function that calculate loss
+        """function that samples from q(z) with reparametrization
 
         Parameters
         ----------
@@ -155,7 +155,7 @@ class VAE(nn.Module):
         return 0.5 * (mu.pow(2) + sigma.pow(2) - 2 * torch.log(sigma) - 1).sum(-1)
 
     def gen_sample_data(self, sample_data_size, latent_dim):
-        """function that calculate kl divergence
+        """function that generates samples from the model
 
         Parameters
         ----------
@@ -173,29 +173,6 @@ class VAE(nn.Module):
         z = distr.sample(torch.Size([sample_data_size, latent_dim]))
         gendata = self.decoder(z)
         return gendata
-
-
-def show_mnist(nr_row, nr_col, data_loader):
-    """function that show the mnist image
-
-    Parameters
-    ----------
-    nr_row: int
-        number of rows
-    nr_col: int
-        number of columns
-    data_loader:  torch.utils.data.DataLoader
-        dataloader
-    """
-    fig = plt.figure(figsize=(10, 6))
-    nr_total = nr_row * nr_col
-    for i in range(nr_total):
-        idx = np.random.randint(0, len(data_loader))
-        ax = fig.add_subplot(nr_row, nr_col, i + 1)
-        image = data_loader.dataset[idx][0].view(28, 28).numpy()
-        ax.imshow(image)
-        ax.axis("off")
-    plt.show()
 
 
 class VAEmi(nn.Module):
@@ -276,7 +253,7 @@ class VAEmi(nn.Module):
         return outp
 
     def encoder(self, x):
-        """function that calculate loss
+        """function that gets the parameters of q(z) for a batch of data points
 
         Parameters
         ----------
@@ -348,7 +325,7 @@ class VAEmi(nn.Module):
         return 0.5 * (mu.pow(2) + sigma.pow(2) - 2 * torch.log(sigma) - 1).sum(-1)
 
     def gen_sample_data(self, sample_data_size, latent_dim):
-        """function that calculate kl divergence
+        """function that generates samples from the model
 
         Parameters
         ----------
@@ -369,7 +346,7 @@ class VAEmi(nn.Module):
 
 
 def show_mnist(nr_row, nr_col, data_loader):
-    """function that show the mnist image
+    """function that show the original mnist image
 
     Parameters
     ----------
@@ -392,7 +369,7 @@ def show_mnist(nr_row, nr_col, data_loader):
 
 
 def show_reconstruct_mnist(nr_row, nr_col, reconstr, labels):
-    """function that show the mnist image
+    """function that show the reconstructed mnist image
 
     Parameters
     ----------
@@ -418,7 +395,7 @@ def show_reconstruct_mnist(nr_row, nr_col, reconstr, labels):
 
 
 def show_generate_mnist(nr_row, nr_col, gendata):
-    """function that show the mnist image
+    """function that show the generated mnist image
 
     Parameters
     ----------
@@ -439,8 +416,9 @@ def show_generate_mnist(nr_row, nr_col, gendata):
         ax.axis("off")
     plt.show()
 
+
 def show_latent_distribution(latent_data, labels):
-    """function that show the mnist image
+    """function that show the latent distribution
 
     Parameters
     ----------
